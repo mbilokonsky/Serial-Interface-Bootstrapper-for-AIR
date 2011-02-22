@@ -1,0 +1,10 @@
+This is a bootstrapper for creating projects using Adobe AIR 2.5 or greater. 
+
+
+What Is It?
+This is the source folder for a Flex AIR application. It includes a bootstrapper .mxml file, two custom classes which abstract out some NativeProcess stuff and
+a Python script which handles the actual serial interface. Documentation is commented into com.prettysmartstudios.serial.SerialInterface.
+
+Why Use This?
+I created this to help me work with Arduino boards on a Mac computer where I was having difficulty with TinkerProxy. This doesn't rely on sockets at all, opting
+instead to pass strings around using StandardInput and StandardOutput.
