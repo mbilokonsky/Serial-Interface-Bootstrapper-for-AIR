@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   creationComplete="creationCompleteHandler(event)"
+					   closing="closingHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.prettysmartstudios.serial.SerialEvent;
+			import com.prettysmartstudios.serial.SerialInterface;
+			
+			import mx.events.FlexEvent;
+
+			public var serialInterface:SerialInterface;
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				// READ THE DOCUMENTATION IN THE SERIALINTERFACE CLASS BEFORE YOU DO ANYTHING ELSE!
+				serialInterface = new SerialInterface();
+				
+				serialInterface.addEventListener(SerialEvent.NATIVE_PROCESS_STARTED, startedHandler);
+				serialInterface.addEventListener(SerialEvent.NATIVE_PROCESS_ENDED, endedHandler);
+				serialInterface.addEventListener(SerialEvent.PYTHON_NOT_FOUND, pythonNotFoundHandler);
+				serialInterface.addEventListener(SerialEvent.STANDARD_OUTPUT, stoutHandler);
+				serialInterface.addEventListener(SerialEvent.STANDARD_ERROR, sterrHandler);
+				
+				serialInterface.startup("C:\\Python\\python.exe", "COM3", "9600");
+				
+			}
+	// various handlers for SerialEvents
+			protected function closingHandler(event:Event):void
+			{
+				if (serialInterface) {
+					serialInterface.close();	
+				}
+			}
+			
+			protected function startedHandler(e:SerialEvent):void {
+				trace(e.message);
+			}
+			
+			protected function endedHandler(e:SerialEvent):void {
+				trace(e.message);
+			}
+			
+			protected function pythonNotFoundHandler(e:SerialEvent):void {
+				serialInterface = null;
+				trace(e.message);
+			}
+			
+			protected function stoutHandler(e:SerialEvent):void {
+				var output:String = e.message += outputDisplay.text;
+				
+				outputDisplay.text = output;
+				
+			}
+			
+			protected function sterrHandler(e:SerialEvent):void {
+				trace(e.message);
+			}
+
+		// handler for button
+			protected function buttonClicked(event:MouseEvent):void
+			{
+				if (textInput.text.length > 0) {
+					serialInterface.write(textInput.text);
+					textInput.text = "";
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+	
+	<s:TextInput id="textInput" left="10" right="114" top="9"/>
+	<s:Button id="button" label="Write to Serial" click="buttonClicked(event)" right="10" top="10"/>
+	<s:Label id="outputDisplay" top="39" left="10" right="114" bottom="10"/>
+	
+	
+</s:WindowedApplication>
